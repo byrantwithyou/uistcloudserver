@@ -1,25 +1,19 @@
-const express = require("express");
-const app = express();
-const http = require("http").Server(app);
-const io = require("socket.io")(http);
-const path = require("path");
+const express = require('express');
+const socketIO = require('socket.io');
+const path = require('path');
 
-io.set("transports", [
-  "websocket",
-  "xhr-polling",
-  "jsonp-polling",
-  "htmlfile",
-  "flashsocket"
-]);
-io.set("origins", "*:*");
-//begin listening at port 8089
-//const port = process.env.PORT || 8089; 
-const port =  8088;
-http.listen(port);
-console.log("listening at port 8089......");
-const INDEX = path.join(__dirname, "index.html");
+const PORT = process.env.PORT || 3000;
+const INDEX = path.join(__dirname, 'index.html');
 
-const server = express().use((req, res) => res.sendFile(INDEX)).listen(port, () => console.log());
+const server = express()
+  .use((req, res) => res.sendFile(INDEX))
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+const io = socketIO(server);
+
+//const INDEX = path.join(__dirname, "index.html");
+
+//const server = express().use((req, res) => res.sendFile(INDEX)).listen(port, () => console.log());
 
 let studentProfile = [];
 let behaviorsForAll = [];
