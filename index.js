@@ -14,23 +14,12 @@ let stepsForAll = [];
 let subsectionsForAll = [];
 let settingsForAll = [];
 let teacherID = "";
-let stepProfile = [];
 
 
 io.on("connection", function (socket) {
   
 
-  socket.on("stepProfile", function( name, currentSubsection, stepContent ) {
-    stepProfile[stepProfile.findIndex((element) => (element.name == name))] = {
-      id: socket.id,
-      name: name,
-      currentSubsection: currentSubsection,
-      stepContent: stepContent
-    };
-    if (teacherID && io.sockets.connected[teacherID]) {
-      io.sockets.connected[teacherID].emit("stepProfile", stepProfile);
-    }
-  });
+  
   
   socket.on("sendFeedback", function(comment, name) {
     const index = studentProfile.findIndex((element) => (element.name == name));
@@ -145,13 +134,6 @@ io.on("connection", function (socket) {
 
     }
 
-    deleteStudentIndex = stepProfile.findIndex((element) => (element.id == socket.id));
-    if (deleteStudentIndex >= 0) {
-      stepProfile.splice(deleteStudentIndex, 1);
-      if (teacherID && io.sockets.connected[teacherID]) {
-        io.sockets.connected[teacherID].emit("stepProfile", stepProfile);
-      }
-    }
     if (socket.id == teacherID) {
       teacherID = "";
     }
@@ -184,10 +166,12 @@ io.on("connection", function (socket) {
     //target is influenced by reviewTimes, time and random factor
     console.log(studentProfile.length);
     let random = JSON.parse(JSON.stringify(studentProfile));
-    random.splice(random.findIndex((element) => (element.id == socket.id)), 1);
+    if (random.findIndex((element) => (element.id == socket.id)) >= 0) {
+      random.splice(random.findIndex((element) => (element.id == socket.id)), 1);
+    }
     let ra = 0;
     if (random.length > 0) {
-      ra = Math.floor(Math.random() * (random.length - 1))
+      ra = Math.floor(Math.random() * random.length)
     }
     if (io.sockets.connected[random[ra].id]) {
       console.log("emitted to the reviewing reviewing student");
