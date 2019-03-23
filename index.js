@@ -155,13 +155,23 @@ io.on("connection", function (socket) {
     //when finished table is 1, the state is "submitted" but not "approv
     //target is influenced by reviewTimes, time and random factor
     console.log(studentProfile.length);
-    let random = JSON.parse(JSON.stringify(studentProfile));
+    let randomTemp = [];
+    for (let student of StudentProfile) {
+      if (io.sockets.connected[student.id]) {
+        randomTemp.push(student);
+      }
+    }
+    let random = JSON.parse(JSON.stringify(randomTemp));
     if (random.findIndex((element) => (element.id == socket.id)) >= 0) {
       random.splice(random.findIndex((element) => (element.id == socket.id)), 1);
     }
     let ra = 0;
     if (random.length > 0) {
       ra = Math.floor(Math.random() * random.length)
+    } else {
+      if (teacherID && io.sockets.connected[teacherID]) {
+        io.sockets.connected[teacherID].emit("review2Teacher", data[0], behavior, data[1]);
+      }
     }
     if (io.sockets.connected[random[ra].id]) {
       console.log("emitted to the reviewing reviewing student");
@@ -192,6 +202,8 @@ io.on("connection", function (socket) {
 
   socket.on("review2Teacher", function(reviewResultImg, reviewResultBehavior, studentName) {
     if (teacherID && io.sockets.connected[teacherID]) {
+      io.sockets.connected[teacherID].emit("review2Teacher", reviewResultImg, reviewResultBehavior, studentName);
+    }if (teacherID && io.sockets.connected[teacherID]) {
       io.sockets.connected[teacherID].emit("review2Teacher", reviewResultImg, reviewResultBehavior, studentName);
     }
   });
