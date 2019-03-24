@@ -156,7 +156,7 @@ io.on("connection", function (socket) {
     //target is influenced by reviewTimes, time and random factor
     console.log(studentProfile.length);
     let randomTemp = [];
-    for (let student of StudentProfile) {
+    for (let student of studentProfile) {
       if (io.sockets.connected[student.id]) {
         randomTemp.push(student);
       }
