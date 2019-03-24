@@ -56,6 +56,7 @@ io.on("connection", function (socket) {
 
   socket.on("sendMobilePhoto", function(img, studentName) {
     const index = studentProfile.findIndex((element) => (element.name == studentName));
+    console.log(teacherID);
     if (teacherID && io.sockets.connected[teacherID]) {
       console.log("good");
       io.sockets.connected[teacherID].emit("studentView", img, studentName);
