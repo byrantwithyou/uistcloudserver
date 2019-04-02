@@ -16,11 +16,9 @@ let settingsForAll = [];
 let teacherID = "";
 
 
-io.on("connection", function (socket) {
-  
 
-  
-  
+
+io.on("connection", function (socket) {
   socket.on("sendFeedback", function(comment, name) {
     const index = studentProfile.findIndex((element) => (element.name == name));
     if (index >= 0) {
